@@ -1,0 +1,16 @@
+# Core ML and deep learning
+tensorflow==2.13.0
+keras==2.13.1
+
+# Image processing
+opencv-python==4.8.1.78
+eumdac==0.1.7  # make sure this version exists; adjust if needed
+
+# Data manipulation
+numpy==1.26.0
+pandas==2.1.1
+matplotlib==3.8.0
+
+# Optional: for progress bars or nice CLI experience
+tqdm==4.66.1
+
