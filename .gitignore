@@ -2,7 +2,6 @@ __pycache__/
 *.pyc
 .env
 *.pkl
-data/
 models/
 checkpoints/
 *.ipynb_checkpoints
