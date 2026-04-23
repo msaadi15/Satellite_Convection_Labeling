@@ -7,7 +7,6 @@
 
 ## Overview
 This project segments convection patterns in satellite images using a **U-Net** architecture.  
-It uses **OpenCV** for image preprocessing and visualization, and is designed for quick experimentation with satellite datasets.
 
 ---
 
