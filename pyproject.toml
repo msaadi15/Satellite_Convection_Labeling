@@ -7,7 +7,7 @@ name = "convection-seg"
 version = "0.1.0"
 description = "Real-time convection segmentation over Morocco from MSG SEVIRI imagery (U-Net)"
 requires-python = ">=3.10"
-dependencies = ["numpy", "pillow", "pyyaml", "pandas"]
+dependencies = ["numpy", "pillow", "pyyaml", "pandas", "opencv-python-headless"]
 
 [project.optional-dependencies]
 ml = ["tensorflow>=2.16"]

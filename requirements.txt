@@ -1,6 +1,7 @@
 # Runtime dependencies (see pyproject.toml extras for the split install)
 numpy
 pillow
+opencv-python-headless
 pyyaml
 pandas
 tensorflow>=2.16        # checkpoint is Keras 3 (.keras saved with keras 3.10)
