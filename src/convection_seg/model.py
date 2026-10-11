@@ -1,12 +1,15 @@
 """U-Net loading and inference (TensorFlow/Keras imported lazily)."""
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 import numpy as np
 from PIL import Image
 
 from .preprocessing import postprocess_mask, preprocess_image
+
+log = logging.getLogger(__name__)
 
 
 def register_custom_objects() -> dict:
@@ -35,7 +38,7 @@ def register_custom_objects() -> dict:
 class Segmenter:
     """Wraps the trained U-Net: RGB convection image in, binary mask out."""
 
-    def __init__(self, model, input_size=(160, 160), threshold=0.5):
+    def __init__(self, model, input_size=(512, 512), threshold=0.5):
         self.model = model
         self.input_size = tuple(input_size)
         self.threshold = threshold
@@ -52,7 +55,12 @@ class Segmenter:
         model = keras.models.load_model(
             path, custom_objects=register_custom_objects(), compile=False
         )
-        return cls(model, cfg["model"]["input_size"], cfg["model"]["threshold"])
+        size = tuple(cfg["model"]["input_size"])
+        declared = tuple(model.input_shape[1:3])
+        if None not in declared and declared != size:
+            log.warning("Config input_size %s != checkpoint input %s; using the checkpoint's", size, declared)
+            size = declared
+        return cls(model, size, cfg["model"]["threshold"])
 
     def predict_proba(self, image: Image.Image) -> np.ndarray:
         """Probability map at the model resolution, shape (H, W)."""

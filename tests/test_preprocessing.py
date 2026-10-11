@@ -5,14 +5,14 @@ from convection_seg.preprocessing import coverage, overlay_mask, postprocess_mas
 
 
 def test_preprocess_shape_and_range():
-    x = preprocess_image(Image.new("RGB", (600, 521), (255, 0, 128)), (160, 160))
-    assert x.shape == (160, 160, 3) and x.dtype == np.float32
+    x = preprocess_image(Image.new("RGB", (600, 521), (255, 0, 128)), (512, 512))
+    assert x.shape == (512, 512, 3) and x.dtype == np.float32
     assert x.min() >= 0 and x.max() <= 1
 
 
 def test_postprocess_resizes_and_thresholds():
-    proba = np.zeros((160, 160), dtype=np.float32)
-    proba[:80] = 0.9
+    proba = np.zeros((512, 512), dtype=np.float32)
+    proba[:256] = 0.9
     mask = postprocess_mask(proba, (600, 521))
     assert mask.shape == (521, 600)
     assert set(np.unique(mask)) == {0, 255}

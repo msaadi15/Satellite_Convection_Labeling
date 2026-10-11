@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 
 
-def preprocess_image(image: Image.Image, size=(160, 160)) -> np.ndarray:
+def preprocess_image(image: Image.Image, size=(512, 512)) -> np.ndarray:
     """RGB image -> float32 array in [0, 1] of shape (H, W, 3), as used in training."""
     h, w = size
     img = image.convert("RGB").resize((w, h), Image.BILINEAR)

@@ -16,8 +16,8 @@
 
 <img src="fig/unet_architecture.png" width="85%">
 
-*U-Net architecture (Conv 3×3 → BatchNorm → ReLU blocks, skip connections). The figure draws a 512×512 input; the
-released checkpoint takes 160×160×3 and its mask is upsampled to the image size.*
+*U-Net architecture (Conv 3×3 → BatchNorm → ReLU blocks, skip connections). Input is a 512×512×3 convection RGB image;
+output is a 512×512×1 binary mask, resized back to the original scene size.*
 
 </div>
 
@@ -54,7 +54,7 @@ flattered by empty scenes; see the notebooks for the per-scene distributions (Bl
 ```mermaid
 flowchart LR
     A[EUMETSAT Data Store<br/>MSG HRSEVIRI .nat] --> B[satpy<br/>convection RGB + crop Morocco]
-    B --> C[U-Net 160x160]
+    B --> C[U-Net 512x512x3]
     C --> D[mask + overlay PNG]
     C --> E[monitoring<br/>coverage, brightness, drift]
     D --> F[FastAPI /latest]
@@ -164,7 +164,8 @@ make lint      # ruff
 - The real-time path (EUMETSAT download → satpy RGB → U-Net) has been written against the same composite and
   region used for the training images, but needs your EUMETSAT credentials to run end to end; the
   `nat_to_rgb` orientation/cropping should be checked once against a known scene.
-- The model works at 160×160 and is upsampled to the image size, so mask edges are coarse.
+- Scenes (about 600×521) are resized to 512×512 for the model and the mask is resized back, so mask edges are slightly interpolated.
+- The model input size is read from the checkpoint; if it differs from `model.input_size` in the config, a warning is logged and the checkpoint's size wins.
 - Training/evaluation notebooks were written for Google Colab and contain Drive paths.
 
 ## Authors

@@ -2,7 +2,7 @@
 # e.g. CONVSEG__MODEL__THRESHOLD=0.6
 model:
   path: model/model_all_best.keras
-  input_size: [160, 160]     # (H, W) the U-Net was trained on
+  input_size: [512, 512]     # (H, W) the final U-Net expects; overridden by the checkpoint if it differs
   threshold: 0.5
 
 region:                      # Morocco

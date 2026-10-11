@@ -11,7 +11,7 @@ from convection_seg.model import Segmenter
 class FakeModel:
     def predict(self, x, verbose=0):
         out = np.zeros((*x.shape[:3], 1), np.float32)
-        out[:, :80] = 0.9
+        out[:, : x.shape[1] // 2] = 0.9
         return out
 
 
