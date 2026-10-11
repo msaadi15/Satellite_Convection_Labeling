@@ -59,7 +59,7 @@ flowchart LR
 ## Repository layout
 
 ```
-src/convection_seg/   package: satellite, preprocessing, model, realtime, monitoring, evaluate, api, cli
+src/convection_seg/   package: satellite, opencv_baseline, comparison, preprocessing, model, realtime, monitoring, evaluate, api, cli
 configs/default.yaml  region, model, real-time and monitoring settings
 tests/                pytest suite (no TensorFlow needed)
 notebooks/            01-05: analysis, training and evaluation notebooks (Colab)
@@ -88,6 +88,17 @@ The checkpoint (`model_all_best.keras`, ~370 MB) is too large for Git. Put it at
 ```bash
 convseg predict data/image/prod_2023-01-01T12-00-00.000Z.png --out outputs/predict
 ```
+
+### Compare U-Net vs OpenCV
+
+```bash
+convseg compare data/image/prod_2023-01-01T12-00-00.000Z.png --masks data/mask_manual
+convseg opencv data/image outputs/opencv_masks      # OpenCV (HSV) baseline only
+```
+
+`compare` writes a panel *RGB | Expert | U-Net | OpenCV | agreement* (green = both, red = U-Net only,
+blue = OpenCV only) and prints IoU/Dice between methods and against the expert. `convseg evaluate` reports
+both methods side by side, and the real-time loop saves `latest_compare.png` for every scan.
 
 ### Real-time segmentation of Morocco
 

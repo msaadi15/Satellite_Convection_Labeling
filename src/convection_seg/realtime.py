@@ -7,8 +7,10 @@ from pathlib import Path
 
 from PIL import Image
 
+from .comparison import compare_stats, comparison_panel
 from .model import Segmenter
 from .monitoring import image_stats, log_prediction
+from .opencv_baseline import segment_hsv
 from .preprocessing import overlay_mask
 from .satellite import fetch_latest_nat, nat_to_rgb, scan_time_from_name
 
@@ -21,10 +23,16 @@ def segment_and_save(segmenter: Segmenter, image: Image.Image, scan_time: str, c
     out.mkdir(parents=True, exist_ok=True)
     mask, proba = segmenter.predict(image)
     overlay = overlay_mask(image, mask)
-    for name, img in (("rgb", image), ("mask", Image.fromarray(mask)), ("overlay", overlay)):
+    cv_mask = segment_hsv(image)
+    panel = comparison_panel(image, mask, cv_mask)
+    products = (("rgb", image), ("mask", Image.fromarray(mask)), ("overlay", overlay),
+                ("opencv_mask", Image.fromarray(cv_mask)), ("compare", panel))
+    for name, img in products:
         img.save(out / f"{scan_time}_{name}.png")
         img.save(out / f"latest_{name}.png")
-    record = {"scan_time": scan_time, **image_stats(image, mask, proba)}
+    cmp = compare_stats(mask, cv_mask)
+    record = {"scan_time": scan_time, **image_stats(image, mask, proba),
+              "opencv_coverage": cmp["opencv_coverage"], "iou_unet_vs_opencv": cmp["iou_unet_vs_opencv"]}
     return log_prediction(cfg, record)
 
 

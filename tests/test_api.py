@@ -29,3 +29,11 @@ def test_bad_upload_is_400(monkeypatch):
     monkeypatch.setattr(api, "get_segmenter", lambda: Segmenter(FakeModel()))
     r = TestClient(api.app).post("/predict", files={"file": ("a.png", b"nope", "image/png")})
     assert r.status_code == 400
+
+
+def test_compare_output_is_panel(monkeypatch):
+    monkeypatch.setattr(api, "get_segmenter", lambda: Segmenter(FakeModel()))
+    buf = io.BytesIO()
+    Image.new("RGB", (60, 52), (255, 0, 0)).save(buf, format="PNG")
+    r = TestClient(api.app).post("/predict?output=compare", files={"file": ("a.png", buf.getvalue(), "image/png")})
+    assert r.status_code == 200 and Image.open(io.BytesIO(r.content)).size[0] == 240

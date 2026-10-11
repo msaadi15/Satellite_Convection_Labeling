@@ -1,10 +1,12 @@
-"""`convseg` command line: predict | realtime | evaluate | serve | make-reference."""
+"""`convseg` command line: predict | compare | opencv | realtime | evaluate | serve | make-reference."""
 from __future__ import annotations
 
 import argparse
 import logging
 import sys
 from pathlib import Path
+
+import numpy as np
 
 from .config import load_config
 
@@ -20,6 +22,35 @@ def _predict(args, cfg):
     for p in args.images:
         rec = segment_and_save(seg, Image.open(p).convert("RGB"), Path(p).stem, cfg)
         print(f"{p}: coverage={rec['coverage']:.3f}")
+
+
+def _compare(args, cfg):
+    from PIL import Image
+
+    from .comparison import compare_stats, comparison_panel
+    from .model import Segmenter
+    from .opencv_baseline import segment_hsv
+
+    seg = Segmenter.from_config(cfg)
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    for p in args.images:
+        image = Image.open(p).convert("RGB")
+        unet, _ = seg.predict(image)
+        cv = segment_hsv(image)
+        truth = None
+        if args.masks and (Path(args.masks) / f"mask_{Path(p).name}").exists():
+            truth = np.asarray(Image.open(Path(args.masks) / f"mask_{Path(p).name}").convert("L")
+                               .resize(image.size, Image.NEAREST))
+        comparison_panel(image, unet, cv, truth).save(out / f"{Path(p).stem}_compare.png")
+        stats = compare_stats(unet, cv, truth)
+        print(p, {k: round(v, 3) for k, v in stats.items()})
+
+
+def _opencv(args, cfg):
+    from .opencv_baseline import process_folder
+
+    print(f"{process_folder(args.input, args.output)} masks written to {args.output}")
 
 
 def _realtime(args, cfg):
@@ -64,6 +95,17 @@ def main(argv=None):
     s.add_argument("images", nargs="+")
     s.add_argument("--out", default="outputs/predict")
     s.set_defaults(fn=_predict)
+
+    s = sub.add_parser("compare", help="U-Net vs OpenCV side-by-side panels (+ expert if --masks)")
+    s.add_argument("images", nargs="+")
+    s.add_argument("--masks", help="folder of expert masks named mask_<image>.png")
+    s.add_argument("--out", default="outputs/compare")
+    s.set_defaults(fn=_compare)
+
+    s = sub.add_parser("opencv", help="run only the OpenCV HSV baseline on a folder")
+    s.add_argument("input")
+    s.add_argument("output")
+    s.set_defaults(fn=_opencv)
 
     s = sub.add_parser("realtime", help="continuously segment the latest SEVIRI scan")
     s.add_argument("--once", action="store_true", help="run a single cycle and exit")

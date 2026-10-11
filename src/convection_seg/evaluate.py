@@ -8,6 +8,7 @@ import numpy as np
 from PIL import Image
 
 from .model import Segmenter
+from .opencv_baseline import segment_hsv
 
 
 def binary_metrics(pred: np.ndarray, truth: np.ndarray) -> dict:
@@ -46,12 +47,17 @@ def evaluate(cfg: dict, image_dir: str, mask_dir: str, limit: int | None = None,
         image = Image.open(img_path).convert("RGB")
         pred, _ = seg.predict(image)
         truth = np.asarray(Image.open(mask_path).convert("L").resize(image.size, Image.NEAREST))
-        rows.append({"filename": img_path.stem, **binary_metrics(pred, truth)})
+        rows.append({
+            "filename": img_path.stem,
+            **binary_metrics(pred, truth),
+            **{f"{k}_opencv": v for k, v in binary_metrics(segment_hsv(image), truth).items()},
+        })
     df = pd.DataFrame(rows)
     if out_csv:
         Path(out_csv).parent.mkdir(parents=True, exist_ok=True)
         df.to_csv(out_csv, index=False)
-    summary = {"n_images": len(df), **{f"mean_{c}": float(df[c].mean()) for c in ("iou", "dice", "acc")}}
+    cols = ("iou", "dice", "acc", "iou_opencv", "dice_opencv", "acc_opencv")
+    summary = {"n_images": len(df), **{f"mean_{c}": float(df[c].mean()) for c in cols}}
     if cfg["monitoring"].get("mlflow_enabled"):
         import mlflow
 
