@@ -106,6 +106,10 @@ both methods side by side, and the real-time loop saves `latest_compare.png` for
    ```bash
    export EUMETSAT_KEY=...  EUMETSAT_SECRET=...      # or JSON file ~/.eumetsat_api_key
    ```
+   > Through the API (`POST /realtime`) the server never uses its own credentials: each user sends their
+   > own key/secret in the `X-EUMETSAT-Key` / `X-EUMETSAT-Secret` headers (get them at
+   > <https://api.eumetsat.int/api-key>). They are used for that request only and are not stored or logged.
+   > Use HTTPS in front of the service so headers are encrypted in transit.
 2. Run the loop (one cycle per SEVIRI repeat cycle, 15 min):
    ```bash
    convseg realtime          # or: convseg realtime --once
@@ -118,7 +122,10 @@ both methods side by side, and the real-time loop saves `latest_compare.png` for
 ```bash
 convseg serve                                   # http://localhost:8000/docs
 curl -F file=@scene.png "localhost:8000/predict?output=overlay" -o overlay.png
-curl localhost:8000/latest -o latest.png        # newest real-time product
+curl localhost:8000/latest -o latest.png        # newest product written by `convseg realtime`
+# Real-time through the API: every caller uses THEIR OWN EUMETSAT credentials
+curl -X POST "localhost:8000/realtime?kind=compare" \
+     -H "X-EUMETSAT-Key: <your key>" -H "X-EUMETSAT-Secret: <your secret>" -o realtime.png
 curl localhost:8000/stats                       # monitoring records
 ```
 

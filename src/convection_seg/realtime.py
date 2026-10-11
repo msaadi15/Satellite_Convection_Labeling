@@ -36,9 +36,9 @@ def segment_and_save(segmenter: Segmenter, image: Image.Image, scan_time: str, c
     return log_prediction(cfg, record)
 
 
-def run_once(segmenter: Segmenter, cfg: dict) -> dict | None:
+def run_once(segmenter: Segmenter, cfg: dict, credentials: tuple[str, str] | None = None) -> dict | None:
     workdir = Path(cfg["realtime"]["output_dir"]) / "nat"
-    nat = fetch_latest_nat(cfg, workdir)
+    nat = fetch_latest_nat(cfg, workdir, credentials=credentials)
     if nat is None:
         return None
     try:

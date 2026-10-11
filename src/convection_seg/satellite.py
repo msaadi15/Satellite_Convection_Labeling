@@ -32,12 +32,21 @@ def load_credentials() -> tuple[str, str]:
     )
 
 
-def fetch_latest_nat(cfg: dict, workdir: Path, now: dt.datetime | None = None) -> Path | None:
-    """Download the most recent SEVIRI scan in the lookback window; return the .nat path."""
+def fetch_latest_nat(cfg: dict, workdir: Path, now: dt.datetime | None = None,
+                     credentials: tuple[str, str] | None = None) -> Path | None:
+    """Download the most recent SEVIRI scan in the lookback window; return the .nat path.
+
+    `credentials` = (key, secret). If None, falls back to env/file (CLI use only; the API always
+    passes the caller's own credentials). Raises PermissionError if EUMETSAT rejects them.
+    """
     import eumdac
 
     now = now or dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
-    token = eumdac.AccessToken(load_credentials())
+    token = eumdac.AccessToken(credentials or load_credentials())
+    try:
+        str(token)  # forces the token request so bad credentials fail here
+    except Exception as exc:
+        raise PermissionError("EUMETSAT rejected the supplied key/secret") from exc
     collection = eumdac.DataStore(token).get_collection(cfg["realtime"]["collection"])
     start = now - dt.timedelta(minutes=cfg["realtime"]["lookback_minutes"])
     products = list(collection.search(dtstart=start, dtend=now, sort="start,time,1"))
