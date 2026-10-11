@@ -10,10 +10,6 @@
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-Keras%203-orange)
 ![CI](https://github.com/msaadi15/Satellite_Convection_Labeling/actions/workflows/ci.yml/badge.svg)
 
-<img src="fig/RGB_convection.png" width="32%"> <img src="fig/unet-arc.png" width="32%"> <img src="fig/nombre_episodes_convection_maroc.png" width="32%">
-
-*Convection RGB input · U-Net · 2023 convection-episode map produced by the model*
-
 <img src="fig/unet_architecture.png" width="85%">
 
 *U-Net architecture (Conv 3×3 → BatchNorm → ReLU blocks, skip connections). Input is a 512×512×3 convection RGB image;
@@ -172,3 +168,13 @@ make lint      # ruff
 
 Affiliations (see logos above): EHTP and DGM, Morocco.
 Report: [`docs/report.pdf`](docs/report.pdf).
+
+## Convection episodes over Morocco
+
+<div align="center">
+
+<img src="fig/nombre_episodes_convection_maroc.png" width="80%">
+
+*2023 convection-episode map produced by the model*
+
+</div>
