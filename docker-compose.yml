@@ -1,0 +1,14 @@
+services:
+  api:
+    build: .
+    command: convseg serve
+    ports: ["8000:8000"]
+    volumes: ["./model:/app/model:ro", "./outputs:/app/outputs"]
+  realtime:
+    build: .
+    command: convseg realtime
+    environment:
+      EUMETSAT_KEY: ${EUMETSAT_KEY}
+      EUMETSAT_SECRET: ${EUMETSAT_SECRET}
+    volumes: ["./model:/app/model:ro", "./outputs:/app/outputs"]
+    restart: unless-stopped

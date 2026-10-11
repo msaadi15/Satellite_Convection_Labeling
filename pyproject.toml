@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "convection-seg"
+version = "0.1.0"
+description = "Real-time convection segmentation over Morocco from MSG SEVIRI imagery (U-Net)"
+requires-python = ">=3.10"
+dependencies = ["numpy", "pillow", "pyyaml", "pandas"]
+
+[project.optional-dependencies]
+ml = ["tensorflow>=2.16"]
+realtime = ["eumdac", "satpy", "pyresample", "h5netcdf", "pyspectral"]
+serve = ["fastapi", "uvicorn[standard]", "python-multipart"]
+mlops = ["mlflow"]
+dev = ["pytest", "httpx", "ruff"]
+
+[project.scripts]
+convseg = "convection_seg.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 110
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

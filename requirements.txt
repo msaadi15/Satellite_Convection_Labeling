@@ -1,16 +1,17 @@
-# Core ML and deep learning
-tensorflow==2.13.0
-keras==2.13.1
-
-# Image processing
-opencv-python==4.8.1.78
-eumdac==0.1.7  # make sure this version exists; adjust if needed
-
-# Data manipulation
-numpy==1.26.0
-pandas==2.1.1
-matplotlib==3.8.0
-
-# Optional: for progress bars or nice CLI experience
-tqdm==4.66.1
-
+# Runtime dependencies (see pyproject.toml extras for the split install)
+numpy
+pillow
+pyyaml
+pandas
+tensorflow>=2.16        # checkpoint is Keras 3 (.keras saved with keras 3.10)
+fastapi
+uvicorn[standard]
+python-multipart
+eumdac                  # EUMETSAT Data Store client
+satpy                   # SEVIRI .nat reader + 'convection' RGB
+pyresample
+h5netcdf
+pyspectral
+mlflow
+matplotlib
+tqdm
