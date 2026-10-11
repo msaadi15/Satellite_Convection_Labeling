@@ -26,7 +26,7 @@ a U-Net compared against a classical OpenCV baseline.**
 [8. MLOps](#8-mlops) ·
 [9. Repository layout](#9-repository-layout) ·
 [10. Limitations](#10-limitations) ·
-[11. Authors](#11-authors)
+[11. Author](#11-author)
 
 ## 1. Overview
 
@@ -231,7 +231,6 @@ Dockerfile, docker-compose.yml, .github/workflows/ci.yml, Makefile
   in the config, a warning is logged and the checkpoint's size is used.
 - The training and evaluation notebooks were written for Google Colab and contain Drive paths.
 
-## 11. Authors
+## 11. Author
 
-Affiliations (see logos above): EHTP and DGM, Morocco.
-Report: [`docs/report.pdf`](docs/report.pdf).
+**Abdellah Msaadi**
