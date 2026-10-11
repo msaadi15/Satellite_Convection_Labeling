@@ -6,3 +6,14 @@ data/
 models/
 checkpoints/
 *.ipynb_checkpoints
+model/
+data/
+mlruns/
+runs/
+outputs/
+.venv/
+venv/
+.jupyter/
+.pytest_cache/
+*.egg-info/
+.eumetsat_api_key
