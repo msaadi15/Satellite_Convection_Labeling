@@ -14,6 +14,11 @@
 
 *Convection RGB input · U-Net · 2023 convection-episode map produced by the model*
 
+<img src="fig/unet_architecture.png" width="85%">
+
+*U-Net architecture (Conv 3×3 → BatchNorm → ReLU blocks, skip connections). The figure draws a 512×512 input; the
+released checkpoint takes 160×160×3 and its mask is upsampled to the image size.*
+
 </div>
 
 ---
