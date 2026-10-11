@@ -1,0 +1,26 @@
+# Central configuration. Override any key with env var CONVSEG__<SECTION>__<KEY>,
+# e.g. CONVSEG__MODEL__THRESHOLD=0.6
+model:
+  path: model/model_all_best.keras
+  input_size: [160, 160]     # (H, W) the U-Net was trained on
+  threshold: 0.5
+
+region:                      # Morocco
+  lon_min: -20.0
+  lon_max: 5.0
+  lat_min: 20.0
+  lat_max: 40.0
+
+realtime:
+  interval_seconds: 900      # SEVIRI full-disk repeat cycle = 15 min
+  lookback_minutes: 60       # search window when asking EUMETSAT for the latest scan
+  output_dir: outputs/realtime
+  keep_nat_files: false
+  collection: EO:EUM:DAT:MSG:HRSEVIRI
+
+monitoring:
+  log_file: outputs/monitoring/predictions.jsonl
+  reference_file: configs/reference_stats.json
+  drift_z_threshold: 3.0     # alert when |z| of coverage / brightness exceeds this
+  mlflow_experiment: convection-segmentation-morocco
+  mlflow_enabled: false
